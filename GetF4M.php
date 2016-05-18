@@ -3,7 +3,7 @@ require __DIR__ . '/vendor/autoload.php';
 use Goutte\Client;
 date_default_timezone_set('Asia/Taipei');
 var_dump($argv);
-$url = $argv[2];
+$url = $argv[1];
 // $url = 'http://ivod.ly.gov.tw/Play/VOD/86271/1M/';
 // $url = 'http://ivod.ly.gov.tw/Play/Full/9572/1M/';
 $url = preg_replace("/\/300[Kk]/", '/1M', $url);
@@ -63,6 +63,7 @@ $crawler->filter('.video > script')->each(function ($node) {
       $cmd = "php AdobeHDS.php --quality high --delete --manifest " . $matches[1] . " --outdir ~/Downloads --outfile " . $filename;
       echo $cmd;
       system($cmd);
+      system('rm *-Frag*');
     }
 });
 echo 'QUITAPP\n';

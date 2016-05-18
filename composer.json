@@ -1,5 +1,6 @@
 {
     "require": {
-        "fabpot/goutte": "^3.1"
+        "fabpot/goutte": "^3.1",
+        "gabrielrcouto/php-gui": "^0.1.0"
     }
 }
