@@ -1,9 +1,15 @@
 # Ivod Downloader
 
-usage:
+## Setup
 
     composer install
 
-    GetF4M.php {ivod url}
+## GUI start
+
+    ./App.php
+
+## CLI start
+
+    ./IvodDownloader.php {url}
 
 It will download ivod file to ~/Download path

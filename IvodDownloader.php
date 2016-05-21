@@ -66,6 +66,5 @@ $crawler->filter('.video > script')->each(function ($node) {
       system('rm *-Frag*');
     }
 });
-echo 'QUITAPP\n';
 
 ?>

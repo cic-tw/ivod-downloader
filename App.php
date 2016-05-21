@@ -1,3 +1,5 @@
+#!/usr/bin/env php
+
 <?php
 require 'vendor/autoload.php';
 use Goutte\Client;
@@ -13,18 +15,28 @@ $committee = null;
 $time = null;
 $filename = null;
 
+$application = new Application([
+    'title' => 'IVOD 下載器',
+    'left' => 50,
+    'top' => 50,
+    'width' => 480,
+    'height' => 360,
+    'icon' => realpath(__DIR__) . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR . 'icon.png'
+]);
+
+
 function getIvod($url) {
   $url = preg_replace("/\/300[Kk]/", '/1M', $url);
 
   if (!$url || strpos($url, 'http://ivod.ly.gov.tw/Play') != 0){
-    echo 'Not Ivod url';
-    return false;
+    echo "no ivod url\n";
+    return Array(false, '沒有輸入ivod網址');
   }
 
   $header = get_headers($url);
   if (!strpos($header[0],"200")){
-    echo 'URL error';
-    return false;
+    echo "URL error\n";
+    return Array(false, '網址錯誤');
   }
 
   $client = new Client();
@@ -73,30 +85,57 @@ function getIvod($url) {
   });
 
   $GLOBALS['filename'] = null;
+
+  return Array(true, '');
 }
 
-$application = new Application();
 
 $application->on('start', function() use ($application) {
-    $label = new Label([
-        'text' => "Ivod下載器。請輸入網址，範例：\nhttp://ivod.ly.gov.tw/Play/VOD/81330/1M",
-        'fontSize' => 10,
-        'top' => 10,
-        'left' => 10,
+    $header = new Label([
+        'text' => "IVOD 下載器",
+        'fontSize' => 40,
+        'top' => 50,
+        'left' => 150,
     ]);
-    $inputText = (new InputText())
-        ->setLeft(20)
-        ->setTop(60)
-        ->setWidth(300);
-    $button = (new Button())
-        ->setLeft(40)
-        ->setTop(100)
-        ->setWidth(200)
-        ->setValue('下載ivod');
+    $label = new Label([
+        'text' => "請輸入網址，範例：\nhttp://ivod.ly.gov.tw/Play/VOD/81330/1M/\nhttp://ivod.ly.gov.tw/Play/Full/9572/1M/\n影片會下載至「下載」資料夾。",
+        'fontSize' => 14,
+        'top' => 250,
+        'left' => 40,
+    ]);
+    $errorMsg = new Label([
+        'text' => '',
+        'fontSize' => 14,
+        'fontColor' => '#ff2500',
+        'top' => 320,
+        'left' => 40
+      ]);
+    $inputText = new InputText([
+        'width' => 400,
+        'height' => 20,
+        'left' => 40,
+        'top' => 150,
+        'fontSize' => 14
+      ]);
 
-    $button->on('click', function() use ($inputText) {
+    $button = new Button([
+        'width' => 160,
+        'height' => 20,
+        'left' => 170,
+        'top' => 200,
+        'backgroundColor' => '#ff2500',
+        'fontColor' => '#ffffff',
+        'value' => '馬上下載',
+        'fontSize' => 14
+      ]);
+
+    $button->on('click', function() use ($inputText, $errorMsg) {
+        $errorMsg->setValue('');
         $value = $inputText->getValue();
-        getIvod($value);
+        $result = getIvod($value);
+        if(!$result[0]) {
+           $errorMsg->setText($result[1]);
+        }
     });
 });
 
